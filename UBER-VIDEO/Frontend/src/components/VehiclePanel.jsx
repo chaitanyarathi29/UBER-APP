@@ -11,6 +11,7 @@ const VehiclePanel = (props) => {
                 onClick={() => {
                     props.setVehiclePanel(false);
                     props.setConfirmRidePanel(true);
+                    props.selectVehicle('car');
                 }} 
                 className="flex border-2 border-transparent active:border-black bg-gray-100 mb-2 rounded-xl w-full p-3 items-center justify-between"
             >
@@ -20,12 +21,13 @@ const VehiclePanel = (props) => {
                     <h5 className="font-medium text-sm">2 mins away</h5>
                     <p className="text-xs text-gray-600">Affordable, compact rides</p>
                 </div>
-                <h2 className="text-lg font-semibold">₹193.20</h2>
+                <h2 className="text-lg font-semibold">₹{props.fare.car}</h2>
             </div>
             <div 
                 onClick={() => {
                     props.setVehiclePanel(false);
                     props.setConfirmRidePanel(true);
+                    props.selectVehicle('moto');
                 }} 
                 className="flex border-2 border-transparent active:border-black mb-2 rounded-xl w-full p-3 items-center justify-between"
             >
@@ -35,12 +37,13 @@ const VehiclePanel = (props) => {
                     <h5 className="font-medium text-sm">3 mins away</h5>
                     <p className="text-xs text-gray-600">Affordable motorcycle rides</p>
                 </div>
-                <h2 className="text-lg font-semibold">₹83.20</h2>
+                <h2 className="text-lg font-semibold">₹{props.fare.moto}</h2>
             </div>
-            <div 
+            {/* <div 
                 onClick={() => {
                     props.setVehiclePanel(false);
                     props.setConfirmRidePanel(true);
+                    props.selectVehicle('car');
                 }} 
                 className="flex border-2 border-transparent active:border-black mb-2 rounded-xl w-full p-3 items-center justify-between"
             >
@@ -50,12 +53,13 @@ const VehiclePanel = (props) => {
                     <h5 className="font-medium text-sm">4 mins away</h5>
                     <p className="text-xs text-gray-600">Comfortable sedans, top-quality drivers</p>
                 </div>
-                <h2 className="text-lg font-semibold">₹221.60</h2>
-            </div>
+                <h2 className="text-lg font-semibold">₹{props.fare.car}</h2>
+            </div> */}
             <div 
                 onClick={() => {
                     props.setVehiclePanel(false);
                     props.setConfirmRidePanel(true);
+                    props.selectVehicle('auto');
                 }} 
                 className="flex border-2 border-transparent active:border-black mb-2 rounded-xl w-full p-3 items-center justify-between"
             >
@@ -65,7 +69,7 @@ const VehiclePanel = (props) => {
                     <h5 className="font-medium text-sm">2 mins away</h5>
                     <p className="text-xs text-gray-600">Affordable, compact rides</p>
                 </div>
-                <h2 className="text-lg font-semibold">₹124.70</h2>
+                <h2 className="text-lg font-semibold">₹{props.fare.auto}</h2>
             </div>
         </div>
     )
