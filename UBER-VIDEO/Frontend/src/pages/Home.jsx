@@ -8,6 +8,12 @@ import ConfirmedRidePanel from "../components/ConfirmedVehiclePanel";
 import LookingForDriver from "../components/LookingForDriver";
 import WaitingForDriver from "../components/WaitingForDriver";
 import axios from "axios";
+import { SocketContext } from "../context/socketContext";
+import { useContext } from "react";
+import { useEffect } from "react";
+import { UserDataContext } from "../context/userContext";
+import { useNavigate } from "react-router-dom";
+
 
 const Home = () => {
 
@@ -28,6 +34,29 @@ const Home = () => {
     const [activeField, setActiveField] = useState(null);
     const [fare, setFare] = useState(0);
     const [vehicleType, setVehicleType] = useState(null);
+    const { socket } = useContext(SocketContext);
+    const { user } = useContext(UserDataContext);
+    const [ ride , setRide ] = useState(null);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+
+        console.log(user);
+
+        socket.emit("join", { userType: "user", userId: user._id })
+
+    },[ user ]);
+
+    socket.on('ride-confirmed', ride => {
+        setDriverFound(true);
+        setVehicleFound(false);
+        setRide(ride);
+    })
+
+    socket.on('ride-started', ride => {
+        setDriverFound(false);
+        navigate('/riding');
+    })
 
     const handlePickupChange = async (e) => {
         setPickup(e.target.value)
@@ -138,10 +167,10 @@ const Home = () => {
     }
            
     async function createRide() { 
-        const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/rides/confirm-ride`, {
-            pickup,
-            destination,
-            vehicleType
+        const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/rides/create`, {
+            pickup: pickup.description,
+            destination: destination.description,
+            vehicleType: vehicleType
         }, {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -245,6 +274,7 @@ const Home = () => {
             </div>
             <div ref={driverFoundRef} className="fixed w-full z-10 bottom-0 px-3 py-6 pt-12 bg-white">
                 {driverFound && <WaitingForDriver 
+                    ride={ride}
                     setDriverFound={setDriverFound}
                 />}
             </div>

@@ -1,6 +1,7 @@
 const rideModel = require('../models/ride.model');
 const mapsService = require('../services/maps.service');
 const crypto = require('crypto');
+const { sendMessageToSocketId } = require('../socket');
 
 async function getFare(pickup, destination){
 
@@ -49,21 +50,75 @@ function getOTP(num){
 
 module.exports.createRide = async ({ 
     user, pickup, destination, vehicleType
- }) => {
+    }) => {
     if(!user || !pickup || !destination || !vehicleType){
         throw new Error('User, pickup, destination and vehicleType are required');
     }
 
     const fareDetails = await getFare(pickup, destination);
 
-    const ride = new rideModel({
+    const ride = rideModel.create({
         user,
         pickup,
         destination,
         fare: fareDetails[vehicleType],
-        status: 'pending',
         otp: getOTP(6),
     });
 
     return ride;
-  }    
+}
+
+module.exports.confirmRide = async ({ rideId, captain }) => {
+    if(!rideId){
+        throw new Error('Ride ID and captain are required');
+    }
+
+    await rideModel.findOneAndUpdate(
+        { _id: rideId }, {
+        captain: captain._id,
+        status: 'accepted'
+    });
+
+    const ride = await rideModel.findOne({ _id: rideId }).populate('user').populate('captain').select('+otp');
+
+    if (!ride) {
+        throw new Error('Ride not found');
+    }
+
+    return ride; 
+}
+
+module.exports.startRide = async ({ rideId, otp, captain }) => {
+    if(!rideId || !otp || !captain){
+        throw new Error('Ride ID, OTP and captain are required');
+    }
+
+    const ride = await rideModel.findOne({
+        _id: rideId
+    }).populate('user').populate('captain').select('+otp');
+
+    if (!ride) {
+        throw new Error('Ride not found');
+    }
+
+    if (ride.otp !== otp) {
+        throw new Error('Invalid OTP');
+    }   
+
+    if( ride.status !== 'accepted') {
+        throw new Error('Ride is not in accepted status');
+    }
+
+    await rideModel.findOneAndUpdate(
+        { _id: rideId }, {
+            status: 'ongoing'
+        }
+    )
+
+    sendMessageToSocketId(ride.user.socketId, {
+        event: 'ride-started',
+        data: ride
+    });
+
+    return ride;
+}

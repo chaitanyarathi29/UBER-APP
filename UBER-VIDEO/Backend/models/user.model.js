@@ -18,12 +18,12 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         unique: true,
-        minlength:[5, 'Password must be atleast 5 characters long']
     },
     password: {
         type: String,
         required: true,    
         select: false,
+        minlength:[5, 'Password must be atleast 5 characters long']
     },
     socketId: {
         type: String,
@@ -37,7 +37,6 @@ userSchema.methods.generateAuthToken = function() {
 }
 
 userSchema.methods.comparePassword = async function (password){
-    console.log(password, this.password);
     return await bcrypt.compare(password, this.password);
 }
 

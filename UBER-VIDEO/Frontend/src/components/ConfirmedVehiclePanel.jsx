@@ -13,14 +13,14 @@ const ConfirmedRidePanel = (props) => {
                     <div className="flex items-center gap-5 p-3 border-b-1">
                         <i className=" text-lg ri-map-pin-2-fill"></i>
                         <div>
-                            <h3 className="text-base font-medium">562/11-A</h3>
+                            <h3 className="text-base font-medium">Pickup</h3>
                             <p className="text-sm text-gray-600 -mt-1">{props.pickup.description}</p>
                         </div>
                     </div>
                     <div className="flex items-center gap-5 p-3 border-b-1">
                         <i className="ri-map-pin-range-fill"></i>
                         <div>
-                            <h3 className="text-base font-medium">New Teaching Block</h3>
+                            <h3 className="text-base font-medium">Destination</h3>
                             <p className="text-sm text-gray-600 -mt-1">{props.destination.description}</p>
                         </div>
                     </div>
